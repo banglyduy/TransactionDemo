@@ -1,10 +1,8 @@
 using System;
 using Akka.Actor;
-using TransactionDemo.Actors.Actors;
 using TransactionDemo.Actors.Messages;
-using TransactionSystem.Actors.Messages;
 
-namespace TransactionSystem.Actors.Actors
+namespace TransactionDemo.Actors.Actors
 {
     public class AccountActor : ReceiveActor
     {
@@ -21,28 +19,49 @@ namespace TransactionSystem.Actors.Actors
             Receive<TransactionConfirmMessage>(msg =>
             {
                 Balance += msg.Amount;
+                TransactionSystem.AccountCordinator.Tell(new AccountStateMessage(AccountId, Balance));
                 Sender.Tell(true);
             });
         }
 
         private async void HandleTransaction(TransactionMessage msg)
         {
-           var waitTitme =  new TimeSpan(0,5,0);
-            Balance -= msg.Amount;
+           var waitTitme =  new TimeSpan(0,5,0);    
+            var sender = Sender;
             try
             {
-                var toRef = await Context.ActorSelection($"../{msg.ToId}").ResolveOne(waitTitme);
-                var success = await toRef.Ask<bool>(
+                if (Balance < msg.Amount) throw new Exception("Not enough money in account");
+                Balance -= msg.Amount;
+                var success = await msg.Actor.Ask<bool>(
                     new TransactionConfirmMessage(AccountId, msg.Amount),
                     waitTitme
                 );
-                if (!success)
+                if (success)
+                {
+                    TransactionSystem.AccountCordinator.Tell(new AccountStateMessage(AccountId, Balance));
+                    sender.Tell(new StatusMesssage()
+                    {
+                        Message = $"From account with Id {msg.FromId} to id {msg.ToId} with amount: {msg.Amount}",
+                        Type = "Transfer"
+                    });
+                }
+                else
                 {
                     Balance += msg.Amount;
+                    sender.Tell(new StatusMesssage()
+                    {
+                        Message = $"Failed to tranfer from account with Id {msg.FromId} to id {msg.ToId}.",
+                        Type = "Transfer"
+                    });
                 }
             }catch(Exception ex)
             {
                 Balance += msg.Amount;
+                sender.Tell(new StatusMesssage()
+                {
+                    Message = $"Failed to tranfer from account with Id {msg.FromId} to id {msg.ToId}:" + ex,
+                    Type = "Transfer"
+                });
             }
         }
 

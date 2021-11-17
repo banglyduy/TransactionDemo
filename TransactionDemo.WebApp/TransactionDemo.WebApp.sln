@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionDemo.WebApp", "TransactionDemo.WebApp.csproj", "{3227BF30-A650-4972-A8A6-4D87264642DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionDemo.WebApp", "TransactionDemo.WebApp.csproj", "{3227BF30-A650-4972-A8A6-4D87264642DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionDemo.Actors", "..\TransactionDemo.Actors\TransactionDemo.Actors.csproj", "{9C982AC7-BFD9-41C8-BB9E-B70332CA0C2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionDemo.Actors", "..\TransactionDemo.Actors\TransactionDemo.Actors.csproj", "{9C982AC7-BFD9-41C8-BB9E-B70332CA0C2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionDemo.Hubs", "..\TransactionDemo.Hubs\TransactionDemo.Hubs.csproj", "{4B55937F-5CF5-406F-BEE8-4041B85B2594}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionDemo.Models", "..\TransactionDemo.Models\TransactionDemo.Models.csproj", "{4CE47661-D7E8-4B95-B984-FA6F2FC1C27E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{9C982AC7-BFD9-41C8-BB9E-B70332CA0C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C982AC7-BFD9-41C8-BB9E-B70332CA0C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C982AC7-BFD9-41C8-BB9E-B70332CA0C2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B55937F-5CF5-406F-BEE8-4041B85B2594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B55937F-5CF5-406F-BEE8-4041B85B2594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B55937F-5CF5-406F-BEE8-4041B85B2594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B55937F-5CF5-406F-BEE8-4041B85B2594}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CE47661-D7E8-4B95-B984-FA6F2FC1C27E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CE47661-D7E8-4B95-B984-FA6F2FC1C27E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CE47661-D7E8-4B95-B984-FA6F2FC1C27E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CE47661-D7E8-4B95-B984-FA6F2FC1C27E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

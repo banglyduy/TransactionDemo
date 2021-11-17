@@ -4,7 +4,140 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>Welcome to the Demo</h2>
+        <p class="lead">Below is the controls to generate accounts data and also simulate real times transactions between accounts</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 order-md-12">
+            <h4 class="mb-3">Status Logging</h4>
+            <div class="row mb-3">
+                <div class="col-md-12 mb-2">
+                    <textarea type="text" class="form-control" id="logging" rows="5"
+                        style="font-size: 20px;"></textarea>
+                </div>
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-outline-secondary" id="clearTxt">Clear Text</button>
+                </div>
+            </div>
+            <h4 class="mb-3">Initialize Data</h4>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="firstName">Number of Account</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="noofaccount" value="100000" data-ms-editor="true">
+                        <button type="button" class="btn btn-outline-primary" id="initializeaccount">Initialize
+                            Account</button>
+                    </div>
+                </div>
+            </div>
+            <h4 class="mb-3">Initialize Transactions</h4>
+            <div class="row">
+                <div class="col-md-5 mb-3">
+                    <input type="number" class="form-control" placeholder="Max Id" id="maxid" value=""
+                            data-ms-editor="true">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <input type="number" class="form-control" placeholder="No of Transaction" id="nooftransaction" value=""
+                            data-ms-editor="true">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button type="button" class="btn btn-outline-primary" id="initializetransaction">Initialize Transaction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">© 2017-2018 Company Name</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Privacy</a></li>
+            <li class="list-inline-item"><a href="#">Terms</a></li>
+        </ul>
+    </footer>
 </div>
+
+
+@section Scripts
+{
+<script type="text/javascript">
+    const delay = (milliseconds) =>
+    {
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
+
+
+
+    $(document).ready(function ()
+    {
+        var connection = new signalR.HubConnectionBuilder().withUrl("/hub").build();
+
+        $('#clearTxt').click(() =>
+        {
+            document.getElementById("logging").value = "";
+        });
+
+        //Sending
+        $('#initializeaccount').click(async () =>
+        {
+            let noOfAccount = Number($("#noofaccount").val());
+            for (let i = 1; i <= noOfAccount; i++)
+            {
+                let balance = Math.floor(Math.random() * 1000000) + 1;
+                connection.invoke("InitilizeAccounts", i, balance * 1000);
+                await delay(10);
+            }
+        })
+
+        $('#initializetransaction').click(async () =>
+        {
+            let maxid = Number($("#maxid").val());
+            let nooftransaction = Number($("#nooftransaction").val());
+            for (let i = 0; i < nooftransaction; i++)
+            {
+                let randomFromId = Math.floor(Math.random() * ((maxid+1) - 1) + 1);
+                let randomToId = Math.floor(Math.random() * ((maxid+1) - 1) + 1);
+                let balance = Math.floor(Math.random() * 10000) + 1;
+                connection.invoke("InitTransaction", randomFromId,randomToId, balance * 1000);
+                await delay(250);
+            }
+        })
+
+
+        //Receiving
+        function renderStatus(message)
+        {
+            let a = document.getElementById("logging");
+            a.value += (message + "\n");
+            a.scrollTop = a.scrollHeight;
+        }
+
+        connection.on("ReceiveStatusMessage", renderStatus)
+
+
+
+        async function start()
+        {
+            try
+            {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err)
+            {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
+
+        connection.onclose(async () =>
+        {
+            await start();
+        });
+
+        start();
+
+    });
+</script>
+}

@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using TransactionDemo.Actors;
+using TransactionDemo.Hubs;
+using TransactionDemo.Models.Messages;
 
 namespace TransactionDemo.WebApp
 {
@@ -23,7 +21,12 @@ namespace TransactionDemo.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddRazorPages();
+            services.AddSingleton<TransactionHubHelper, TransactionHubHelper>();
+            services.AddSingleton<IMessageProcessor, ActorSystemService>();
+
+            services.AddTransient<IHostedService, ActorSystemService>(sp => (ActorSystemService)sp.GetRequiredService<IMessageProcessor>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,10 +49,10 @@ namespace TransactionDemo.WebApp
             app.UseRouting();
 
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapHub<TransactionHub>("/hub");
             });
         }
     }

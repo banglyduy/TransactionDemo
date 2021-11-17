@@ -1,4 +1,4 @@
-namespace TransactionSystem.Actors.Messages
+namespace TransactionDemo.Actors.Messages
 {
     public class CreateUserMessage
     {
